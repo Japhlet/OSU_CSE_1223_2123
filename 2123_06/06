@@ -1,0 +1,154 @@
+/*
+ * Project06.java
+ * 
+ * @version 20180423
+ * 
+ */
+
+import java.util.*;
+
+import osu.cse2123.TreeNode;
+
+public class Project06 
+{
+	public static void main(String[] args) 
+	{
+		Scanner keyboard = new Scanner(System.in);
+		//Sets postfix as the default output setting.
+		String outputPick = "p";
+		//Expression default = null
+		TreeNode<String> root = null;
+	
+		//Gets the initial selection from the main menu
+		String selection = getChoice(keyboard);
+		
+		while(!(selection.equalsIgnoreCase("q")))
+		{
+			
+			//Accepts a new expression and prints the current output pick
+			if (selection.equalsIgnoreCase("e"))
+			{
+				root = getExpression(keyboard);
+				printExpression(root, outputPick);
+				
+			}
+			
+			//Sets the preferred output
+			else if(selection.equalsIgnoreCase("s"))
+				{
+					outputPick = outputSetting(keyboard);
+					
+					if(root != null)
+					{
+						printExpression(root, outputPick);
+					}
+				}
+			
+			//Prints an error warning and then advances to print the main menu
+			else
+			{
+				System.out.println("Error! You must enter one of [E], [S], or [Q]!");
+			}
+			
+			//Prints the main menu
+			System.out.println();
+			selection = getChoice(keyboard);
+		}
+		
+		System.out.println("Goodbye!");
+		keyboard.close();
+
+	}
+	
+	//Prints the main menu and gets the first choice from the keyboard
+	public static String getChoice(Scanner keyboard)
+	{
+		System.out.println();
+		System.out.println("Enter your choice: ");
+		System.out.println("[S]et the display format");
+		System.out.println("[E]nter a new expression");
+		System.out.println("[Q]uit");
+		
+		String choice = keyboard.nextLine();
+		
+		return choice;
+	}
+	
+	//Prints the output setting menu and gets the selection
+	public static String outputSetting(Scanner keyboard)
+	{
+		System.out.println("Enter your preferred output display:");
+		System.out.println("[P]ostfix");
+		System.out.println("[I]nfix");
+		System.out.println("p[R]efix");
+		
+		String output = keyboard.nextLine();
+		
+		while(!output.equalsIgnoreCase("p") && !output.equalsIgnoreCase("i")
+				&& !output.equalsIgnoreCase("r"))
+		{
+			System.out.println("You must select a valid choice.");
+			System.out.println("Enter your preferred output display:");
+			System.out.println("[P]ostfix");
+			System.out.println("[I]nfix");
+			System.out.println("p[R]efix");
+			
+			output = keyboard.nextLine();
+		}
+		
+		return output;
+		
+	}
+	
+	//Gets the expression in postfix notation 
+	public static TreeNode<String> getExpression(Scanner keyboard)
+	{
+		System.out.println();
+		System.out.print("Enter your expression in postfix notation: ");
+		String expression = keyboard.nextLine();
+		
+		TreeNode<String> root = ExpressionTree.buildTreeFromString(expression);
+		
+		//If expression does not result in a valid root, asks for a different expression
+		//until a valid expression is given
+		while (root == null)
+		{
+			System.out.println();
+			System.out.println("Error! Expression not in postfix notation!");
+			System.out.println();
+			System.out.print("Enter your expression in postfix notation: ");
+			expression = keyboard.nextLine();
+			root = ExpressionTree.buildTreeFromString(expression);
+		}
+		
+		return root;
+		
+	}
+	
+	//Prints the current expression in the current output
+	public static void printExpression(TreeNode<String> root, String outputSetting)
+	{
+		if (outputSetting.equalsIgnoreCase("p"))
+		{
+			String postfix = ExpressionTree.toPostfixString(root);
+			int eval = ExpressionTree.evaluate(root);
+			System.out.print(postfix + " = " + eval);
+		}
+		
+		else if(outputSetting.equalsIgnoreCase("i"))
+		{
+			String infix = ExpressionTree.toInfixString(root);
+			int eval = ExpressionTree.evaluate(root);
+			System.out.print(infix + " = " + eval);
+		}
+		
+		else if(outputSetting.equalsIgnoreCase("r"))
+		{
+			String prefix = ExpressionTree.toPrefixString(root);
+			int eval = ExpressionTree.evaluate(root);
+			System.out.print(prefix + " = " + eval);
+		}
+	}
+	
+
+}
