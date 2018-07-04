@@ -1,0 +1,59 @@
+/**
+ *   ProductTest.java
+ *    @version 20180202
+ */
+
+
+public class ProductTest 
+{
+
+	public static void main(String[] args) 
+	{
+		//Constructs new product
+		Product myProduct = new Product();
+		
+		//Tests setName() & getName()
+		myProduct.setName("Cats");
+		String name = myProduct.getName();
+		System.out.println(name);
+		
+		//Tests setType() & getType()
+		myProduct.setType("DVD");
+		String type = myProduct.getType();
+		System.out.println(type);
+		
+		//Tests setPrice() & getPrice()
+		myProduct.setPrice(-0.1);
+		double price = myProduct.getPrice();
+		System.out.println("Price: " + price);
+		
+		myProduct.setPrice(10.50);
+		price = myProduct.getPrice();
+		System.out.println("Price: " + price);
+		
+		//Tests setQuantity() & getQuantity()
+		myProduct.setQuantity(-1);
+		int quantity = myProduct.getQuantity();
+		System.out.println("Quantity: " + quantity);
+		
+		myProduct.setQuantity(5);
+		quantity = myProduct.getQuantity();
+		System.out.println("Quantity: " + quantity);
+		
+		//Tests addUserRating(), getUserRating(), getUserRatingCount(), getAvgUserRating()
+		myProduct.addUserRating(1);
+		myProduct.addUserRating(2);
+		myProduct.addUserRating(3);
+		
+		int get = myProduct.getUserRating(2);
+		System.out.println("User Rating: " + get);
+		
+		int count = myProduct.getUserRatingCount();
+		System.out.println("User Rating Count: "+ count);
+		
+		int avg = myProduct.getAvgUserRating();
+		System.out.println("Avg user rating: " + avg);
+
+	}
+
+}
