@@ -1,0 +1,75 @@
+/**
+ * SimplePlayList.java
+ * 
+ * @version 20180216
+ * 
+ */
+
+import java.util.ArrayList;
+
+public class SimplePlayList implements PlayList
+{
+	private ArrayList<SimpleMusicTrack> playlist = new ArrayList<SimpleMusicTrack>();
+	
+	@Override
+	public SimpleMusicTrack getNextTrack() 
+	{
+		if(playlist.isEmpty())
+		{
+			return null;
+		}
+		else
+		{
+			SimpleMusicTrack toReturn = new SimpleMusicTrack();
+			toReturn = this.playlist.get(0);
+			this.playlist.remove(0);
+			
+			return toReturn;
+		}
+		
+	}
+
+	@Override
+	public SimpleMusicTrack peekAtNextTrack() 
+	{
+		if (playlist.isEmpty())
+		{
+			return null;
+		}
+		
+		else
+		{
+			return this.playlist.get(0);
+		}
+	
+	}
+	
+	public SimpleMusicTrack currentlyPlaying() 
+	{
+		SimpleMusicTrack toReturn = this.playlist.get(0);
+		this.playlist.remove(0);
+		
+		return toReturn;
+	}
+
+	@Override
+	public void addTrack(SimpleMusicTrack track) 
+	{
+		this.playlist.add(track);
+		
+	}
+
+	@Override
+	public boolean isEmpty() 
+	{
+		if (this.playlist.size() == 0)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+}
