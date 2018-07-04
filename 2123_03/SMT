@@ -1,0 +1,84 @@
+/**
+ * SimpleMusicTrack.java
+ * 
+ * @version 20180216
+ * 
+ */
+
+import java.util.Scanner;
+import java.io.*;
+
+public class SimpleMusicTrack implements PlayListTrack
+{
+	private String name;
+	private String artist;
+	private String album;
+	
+	
+	@Override
+	public String getName() 
+	{
+		return this.name;
+	}
+
+	@Override
+	public void setName(String name) 
+	{
+		this.name = name;
+		
+	}
+
+	@Override
+	public String getArtist() 
+	{
+		return this.artist;
+	}
+
+	@Override
+	public void setArtist(String artist) 
+	{
+		this.artist = artist;
+	}
+
+	@Override
+	public String getAlbum() 
+	{
+		return this.album;
+	}
+
+	@Override
+	public void setAlbum(String album) 
+	{
+		this.album = album;
+	}
+
+	@Override
+	public boolean getNextTrack(Scanner infile) 
+	{
+		return false;
+	}
+	
+	@Override
+	public boolean equals(Object obj)
+	{
+		SimpleMusicTrack test = (SimpleMusicTrack) obj;
+		
+		if (this.name.equals(test.name) && this.artist.equals(test.artist) && this.album.equals(test.album))
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+		
+	}
+	
+	@Override
+	public String toString()
+	{
+		return "'" + this.name + " / " + this.artist + " / " + this.album + "'";
+	}
+
+	
+}
