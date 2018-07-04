@@ -1,0 +1,285 @@
+/**
+ *   Project02.java
+ * 
+ *   Inventory reporting program
+ *   @version 20180202
+ */
+
+import java.io.*;
+import java.util.Scanner;
+import java.util.ArrayList;
+
+public class Project02 
+{
+
+	public static void main(String[] args) throws IOException
+	{
+		Scanner keyboard = new Scanner(System.in);
+		
+		//Creates ArraList to hold Product Objects
+		ArrayList<Product> productList= new ArrayList<Product>();
+		
+		try
+		{
+			//Opens and reads the file
+			String fileName = getFileName(keyboard);
+			File inFile = new File(fileName);
+			Scanner inScanner = new Scanner(inFile);
+			
+			while (inScanner.hasNext())
+			{
+				//Constructs a new product
+				Product newProduct = new Product();
+				
+				//Accepts & sets product name
+				newProduct.setName(newNameType(inScanner));
+				
+				//Accepts & sets product code
+				newProduct.setInventoryCode(newNameType(inScanner));
+				
+				//Accepts & sets product quantity
+				newProduct.setQuantity(newQuant(inScanner));
+				
+				//Accepts & sets product price
+				newProduct.setPrice(newPrice(inScanner));
+				
+				//Accepts & sets product type
+				newProduct.setType(newNameType(inScanner));
+				
+				//Accepts & sets product user rankings
+				ArrayList<Integer> ratings = newRatings(inScanner);
+				
+				for(int pos = 0; pos < ratings.size(); ++pos)
+				{
+					newProduct.addUserRating(ratings.get(pos));
+				}
+				
+				//Adds new product to the ArrayList
+				productList.add(newProduct);
+			}
+			
+			//Prints Report
+			printHeader();
+			//TODO How to format the report so it's pretty?
+			
+			for(int pos = 0; pos < productList.size(); ++pos)
+			{
+				Product toPrint = productList.get(pos);
+				printProduct(toPrint);
+			}
+			
+			System.out.printf("%-26s", "---------------------------------------------------------------------------");
+			System.out.println();
+			
+			//Prints summary footer
+			System.out.println("Total products in database: " + productList.size());
+			
+			//Highest Average Rated Item
+			int highestAvgIndex = getHighestAverage(productList);
+			String highAvgName = productList.get(highestAvgIndex).getName();
+			System.out.print("Highest Average Ranked Item: " + highAvgName + " (");
+			String stars = printStars(productList.get(highestAvgIndex).getAvgUserRating());
+			System.out.print(stars);
+			System.out.print(")");
+			System.out.println();
+			
+			//Lowest Average Rated Item
+			int lowestAvgIndex = getLowestAverage(productList);
+			String lowAvgName = productList.get(lowestAvgIndex).getName();
+			System.out.print("Lowest Average Ranked Item: " + lowAvgName + " (");
+			stars = printStars(productList.get(lowestAvgIndex).getAvgUserRating());
+			System.out.print(stars);
+			System.out.print(")");
+			System.out.println();
+			
+			//Highest Total Dollar Item
+			int highDollarIndex = getHighestDollar(productList);
+			String hiDollarName = productList.get(highDollarIndex).getName();
+			System.out.println("The Highest Total Dollar Item: " + hiDollarName + " ($" + productList.get(highDollarIndex).getPrice()*productList.get(highDollarIndex).getQuantity() + ")");
+			
+			//Lowest Total Dollar Item
+			int lowDollarIndex = getLowestDollar(productList);
+			String lowDollarName = productList.get(lowDollarIndex).getName();
+			System.out.println("The Lowest Total Dollar Item: " + lowDollarName + " ($" + productList.get(lowDollarIndex).getPrice()*productList.get(lowDollarIndex).getQuantity() + ")");
+			
+			System.out.printf("%-26s", "---------------------------------------------------------------------------");
+			
+			//Closes Scanners
+			keyboard.close();
+			inScanner.close();
+		}
+		
+		//Catches inability to open file
+		catch (IOException e)
+		{
+			System.out.println("Could not open file. " + e);
+		}
+
+	}
+	
+	//Takes file name from user
+	public static String getFileName(Scanner keyboard)
+	{
+		System.out.print("Enter a file name: ");
+		
+		return keyboard.nextLine();
+	}
+	
+	//Accepts product name or product type
+	public static String newNameType(Scanner inScanner)
+	{
+		return inScanner.nextLine();
+	}
+	
+	//Accepts product quantity
+	public static int newQuant(Scanner inScanner)
+	{
+		return Integer.parseInt(inScanner.nextLine());
+	}
+	
+	//Accepts price
+	public static double newPrice(Scanner inScanner)
+	{
+		return Double.parseDouble(inScanner.nextLine());
+	}
+	
+	//Prints stars for ratings
+	public static String printStars(int rating)
+	{
+		String starString = "";
+		
+		for(int pos = 0; pos < rating; ++pos)
+		{
+			starString = starString + "*";
+		}
+		
+		return starString;
+	}
+	
+	//Finds the highest average rated product
+	public static int getHighestAverage(ArrayList<Product> productList)
+	{
+		int maxIndex = 0;
+		int max = productList.get(0).getAvgUserRating(); 
+		
+		for(int pos = 1; pos < productList.size(); ++pos)
+		{
+			Product test = productList.get(pos);
+			int avg = test.getAvgUserRating();
+			
+			if (avg > max)
+			{
+				maxIndex = pos;
+				max = avg;
+			}
+		}
+		
+		return maxIndex;
+	}
+	
+	//Finds the lowest average rated product
+	public static int getLowestAverage(ArrayList<Product> productList)
+	{
+		int minIndex = 0;
+		int min = productList.get(0).getAvgUserRating(); 
+		
+		for(int pos = 1; pos < productList.size(); ++pos)
+		{
+			Product test = productList.get(pos);
+			int avg = test.getAvgUserRating();
+			
+			if (avg < min)
+			{
+				minIndex = pos;
+				min = avg;
+			}
+		}
+		
+		return minIndex;
+	}
+	
+	//Finds the index of the highest total dollar product
+	public static int getHighestDollar(ArrayList<Product> productList)
+	{
+		int highDollarIndex = 0;
+		double highPrice = productList.get(0).getPrice()*productList.get(0).getQuantity(); 
+		
+		for (int pos = 1; pos < productList.size(); ++pos)
+		{
+			Product test = productList.get(pos);
+			double price = test.getPrice()*test.getQuantity();
+			
+			if(price > highPrice)
+			{
+				highDollarIndex = pos;
+				highPrice = price;
+			}
+		}
+		
+		return highDollarIndex;
+	}
+	
+	//Finds the index of the lowest total dollar product
+	public static int getLowestDollar(ArrayList<Product> productList)
+	{
+		int lowDollarIndex = 0;
+		double lowPrice = productList.get(0).getPrice()*productList.get(0).getQuantity(); 
+		
+		for (int pos = 1; pos < productList.size(); ++pos)
+		{
+			Product test = productList.get(pos);
+			double price = test.getPrice()*test.getQuantity();
+			
+			if(price < lowPrice)
+			{
+				lowDollarIndex = pos;
+				lowPrice = price;
+			}
+		}
+		
+		return lowDollarIndex;
+	}
+	
+	public static void printHeader()
+	{
+		System.out.println("Product Inventory Summary Report: ");
+		System.out.printf("%-75s", "---------------------------------------------------------------------------");
+		
+		System.out.println();
+		
+		System.out.printf("%-35s %-11s %-6s %-8s %-8s %-7s %-7s", "Product Name", "I Code", "Type", "Rating", "# Rat.", "Quant.", "Price");
+		System.out.println();
+		System.out.printf("%-35s %-11s %-6s %-8s %-8s %-7s %-7s", "-------------------------","---------", "----", "------", "------", "------", "-----" );
+		System.out.println();
+	}
+	
+	public static void printProduct(Product prod)
+	{
+		String name = prod.getName();
+		String code = prod.getInventoryCode(); 
+		String type = prod.getType();
+		String stars = printStars(prod.getAvgUserRating());
+		int count = prod.getUserRatingCount();
+		int quant = prod.getQuantity();
+		double price = prod.getPrice();
+		System.out.printf("%-35s %-11s %-6s %-8s %-8d %-8d %-7.2f", name, code, type, stars ,count ,quant, price);
+		System.out.println();
+	}
+	
+	//Adds ratings for a product to an ArrayList
+	public static ArrayList<Integer> newRatings(Scanner inScanner)
+	{
+		ArrayList<Integer> ratings = new ArrayList<Integer>();
+		int test = Integer.parseInt(inScanner.nextLine());
+		
+		while(!(test == -1))
+		{
+			ratings.add(test);
+	
+			test = Integer.parseInt(inScanner.nextLine());
+		}
+		
+		return ratings;
+	}
+	
+}
