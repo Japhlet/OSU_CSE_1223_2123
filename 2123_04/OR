@@ -1,0 +1,216 @@
+/**
+ * OrderReporting.java
+ * 
+ * Outputs order reports based on information from a file. 
+ * 
+ *  @version 20180309
+ * 
+ */
+
+import java.util.Scanner;
+import java.util.*;
+import java.io.*;
+
+public class OrderReporting 
+{
+
+	public static void main(String[] args) throws IOException 
+	{
+		Scanner keyboard = new Scanner(System.in);
+		String fileName = getFileName(keyboard);
+		
+		try 
+		{
+			ArrayList<SimpleProduct> products = new ArrayList<SimpleProduct>();
+			
+			//Opens the database file
+			File dataFile = new File(fileName);
+			Scanner inFile = new Scanner(dataFile);
+			
+			//Builds a new customer
+			SimpleCustomer customer = new SimpleCustomer();
+			customer = buildCustomer(inFile);
+			
+			//Read objects from file & stores in ArrayList
+			while (inFile.hasNext())
+			{
+				products.add(getProduct(inFile));
+			}
+		
+			//Builds fulfilled queue and delayed stack
+			Queue<SimpleProduct> fulfilled = new LinkedList<SimpleProduct>();
+			Stack<SimpleProduct> delayed = new Stack<SimpleProduct>();	
+			
+			double totalCost = 0;
+			double outstandingBalance = 0;
+			
+			for (int pos = 0; pos < products.size(); ++pos)
+			{
+				//Selects items to put in fulfilled queue and adds its price to total cost
+				if (products.get(pos).getInStock())
+				{
+					fulfilled.add(products.get(pos));
+					totalCost = totalCost + (products.get(pos).getPrice() * products.get(pos).getQuantity());
+				}
+				
+				//Selects items to be put in delayed stack and adds its price to outstanding balance
+				else
+				{
+					delayed.push(products.get(pos));
+					outstandingBalance = outstandingBalance + (products.get(pos).getPrice() * products.get(pos).getQuantity());
+				}
+			}
+			
+			//Calculates Sales Tax
+			double salesTax = totalCost * customer.getSalesTax();
+				
+			//For fulfilled, calculates shipping cost and total cost
+			double shippingCost = getShippingCost(totalCost);
+			double costAfterTaxShipping = totalCost + salesTax + shippingCost;
+			
+			//Prints customer shipping data
+			System.out.println("Shipping To: ");
+			System.out.println();
+			customer.printAddress();
+			
+			//Print fulfilled order form
+			printFulfilled(fulfilled); 
+			printFulfilledFooter(totalCost, salesTax, shippingCost, costAfterTaxShipping, customer);
+			System.out.println();
+			
+			
+			//Prints customer outstanding order data
+			System.out.println("Orders Outstanding For: ");
+			System.out.println();
+			customer.printAddress();
+			
+			//Print delayed order form
+			printDelayed(delayed);
+			printDelayedFooter(outstandingBalance);
+			
+			inFile.close(); 
+		
+		}
+		
+		catch (IOException e)
+		{
+			System.out.println("Could not open file. " + e);
+		}
+		
+		keyboard.close();
+		
+
+	}
+	
+	public static String getFileName(Scanner keyboard)
+	{
+		System.out.println("Enter database filename: ");
+		return keyboard.nextLine();
+	}
+	
+	//Builds the customer
+	public static SimpleCustomer buildCustomer(Scanner inFile)
+	{
+		SimpleCustomer customer = new SimpleCustomer();
+		
+		customer.setLastName(inFile.nextLine());
+		customer.setFirstName(inFile.nextLine());
+		customer.setAddress(inFile.nextLine());
+		customer.setCity(inFile.nextLine());
+		customer.setState(inFile.nextLine());
+		customer.setZip(inFile.nextLine());
+		customer.setSalesTax(Double.parseDouble(inFile.nextLine()));
+		
+		return customer;
+	}
+	
+	//Builds an individual product from the Scanner
+	public static SimpleProduct getProduct(Scanner inFile)
+	{
+		SimpleProduct product = new SimpleProduct();
+		product.setName(inFile.nextLine());
+		product.setType(inFile.nextLine());
+		product.setPrice(Double.parseDouble(inFile.nextLine()));
+		product.setQuantity(Integer.parseInt(inFile.nextLine()));
+		product.setInStock(Boolean.parseBoolean(inFile.nextLine()));
+		
+		return product;
+		
+	}
+	
+	//Calculates shipping costs
+	public static double getShippingCost(double totalCost)
+	{
+		if(totalCost >= 25)
+		{
+			return 0;
+		}
+		
+		else if (totalCost >= 10)
+		{
+			return totalCost * 0.1;
+		}
+		
+		else
+		{
+			return totalCost * 0.15;
+		}
+	}
+	
+	//Prints fulfilled orders from the fulfilled queue
+	public static void printFulfilled(Queue<SimpleProduct> fulfilled)
+	{
+		while(!fulfilled.isEmpty())
+		{
+			SimpleProduct product = fulfilled.remove();
+			String type = "(" + product.getType() + ")";
+			System.out.printf("%-3d %2s %-33s %-23s %7.2f", product.getQuantity(), "x", product.getName(), type, product.getPrice());
+			System.out.println();
+		}
+		
+		
+	}
+	
+	//Prints the fulfilled item summary footer
+	public static void printFulfilledFooter(double subtotal, double salesTax, double shipping, double allTogether, SimpleCustomer customer)
+	{
+		String taxRate = "(" + customer.getSalesTax() + ")";
+		System.out.printf("%-66s %5.2f", "Subtotal: ", subtotal);
+		System.out.println();
+		System.out.printf("%-13s %-52s %5.2f", "Sales Tax: ", taxRate, salesTax);
+		System.out.println();
+		System.out.printf("%-66s %5.2f", "Shipping: ", shipping);
+		System.out.println();
+		System.out.printf("%-67s", "---------------------------------------------------------------------------");
+		System.out.println();
+		System.out.printf("%-67s %5.2f", "Total: ", allTogether);
+		System.out.println();
+		System.out.printf("%-69s", "-------------------------------------------------------------------------------");
+		System.out.println();
+	}
+	
+	//Prints data from the Delayed Stack
+	public static void printDelayed(Stack<SimpleProduct> delayed)
+	{
+		while(!delayed.isEmpty())
+		{
+			SimpleProduct product = delayed.pop();
+			String type = "(" + product.getType() + ")";
+			System.out.printf("%3d %-3s %-33s %-23s %7.2f", product.getQuantity(), "x", product.getName(), type, product.getPrice());
+			System.out.println();
+			System.out.printf("%-69s", "-------------------------------------------------------------------------------");
+			System.out.println();
+		}
+		
+	}
+	
+	//Prints footer of delayed order (outstanding balance data)
+	public static void printDelayedFooter(double outstandingBalance)
+	{
+		System.out.printf("%-66s %5.2f", "Outstanding Balance: ", outstandingBalance);
+		System.out.println();
+		System.out.printf("%-69s", "-------------------------------------------------------------------------------");
+		System.out.println();
+	}
+
+}
