@@ -1,0 +1,193 @@
+/*
+ * ExpressionTree.java
+ * 
+ * @version 20180423
+ * 
+ */
+
+import java.util.*;
+import osu.cse2123.TreeNode;
+
+public class ExpressionTree 
+{
+	
+	public static TreeNode<String> buildTreeFromString(String expr)
+	{
+		String [] arr = expr.split("\\s+");
+		
+		Stack<TreeNode<String>> exprStack = new Stack<TreeNode<String>>();
+		int counter = 0;
+		
+		for (int pos = 0; pos < arr.length; ++pos)
+		{
+			if (arr[pos].equals("+") || arr[pos].equals("*") || arr[pos].equals("-") ||
+					arr[pos].equals("/") || arr[pos].equals("%"))
+			{
+				TreeNode<String> expNode = new TreeNode<String>(arr[pos]);
+				expNode.setRightChild(exprStack.pop());
+				expNode.setLeftChild(exprStack.pop());
+				exprStack.push(expNode);
+			}
+			
+			else
+			{
+				TreeNode<String> expNode = new TreeNode<String>(arr[pos]);
+				exprStack.push(expNode);
+			}
+			++counter;
+		}
+		
+		if (exprStack.size() > 1 || counter < 2)
+		{
+			return null;
+		}
+		
+		else
+		{
+			return exprStack.pop();
+		}
+	}
+	
+	public static String toPostfixString(TreeNode<String> expr)
+	{
+		String left = "";
+		String right = "";
+		
+		//Base case
+		if (expr.getLeftChild() == null)
+		{
+			left = "";
+		}
+		
+		//General case
+		else 
+		{
+			left = left + toPostfixString(expr.getLeftChild());
+		}
+		
+		//Base case
+		if (expr.getRightChild() == null)
+		{
+			right = "";
+		}
+		
+		//General case
+		else
+		{
+			right = right + toPostfixString(expr.getRightChild());
+		}
+		
+		return left + " " +  right + " " + expr.getData().toString();
+	}
+	
+	public static String toInfixString(TreeNode<String> expr)
+	{
+		
+		String left = ""; 
+		String right = "";
+		
+		//Base Case Left
+		if (expr.getLeftChild() == null)
+		{
+			left = ""; 
+		}
+		
+		//General Case Left
+		else
+		{
+			left = left + "(" + toInfixString(expr.getLeftChild());
+		}
+		
+		//Base Case Right
+		if (expr.getRightChild() == null)
+		{
+			right = "";
+		}
+		
+		//General Case Right
+		else
+		{
+			right = right + toInfixString(expr.getRightChild()) + ")";
+		}
+		
+		return left + expr.getData().toString() + right;
+		
+	}
+	
+	public static String toPrefixString(TreeNode<String> expr)
+	{
+		String left = "";
+		String right = "";
+		
+		//Base Case Left
+				if (expr.getLeftChild() == null)
+				{
+					left = "";
+				}
+				
+				//General Case Left
+				else
+				{
+					left = left + toPrefixString(expr.getLeftChild());
+				}
+		
+		//Base Case Right
+		if (expr.getRightChild() == null)
+		{
+			right = "";
+		}
+		
+		//General Case Right
+		else
+		{
+			right = right + toPrefixString(expr.getRightChild());
+		}
+		
+		
+		return expr.getData().toString() + " " + left + " " + right;
+	}
+	
+	public static int evaluate(TreeNode<String> expr)
+	{
+		int toReturn = 0;
+		
+		if (expr.getData().equals("*") || expr.getData().equals("+") || expr.getData().equals("-") ||
+				expr.getData().equals("/") || expr.getData().equals("%"))
+		{
+			if(expr.getData().equals("*"))
+			{
+				toReturn = evaluate(expr.getLeftChild()) * evaluate(expr.getRightChild());
+			}
+			
+			else if(expr.getData().equals("+"))
+			{
+				toReturn = evaluate(expr.getLeftChild()) + evaluate(expr.getRightChild());
+			}
+			
+			else if(expr.getData().equals("-"))
+			{
+				toReturn = evaluate(expr.getLeftChild()) - evaluate(expr.getRightChild());
+			}
+			
+			else if(expr.getData().equals("/"))
+			{
+				toReturn = evaluate(expr.getLeftChild()) / evaluate(expr.getRightChild());
+			}
+			
+			else if(expr.getData().equals("%"))
+			{
+				toReturn = evaluate(expr.getLeftChild()) % evaluate(expr.getRightChild());
+			}
+		}
+		
+		else
+		{
+			toReturn = Integer.parseInt(expr.getData());
+		}
+		
+		return toReturn;
+		
+	
+	}
+
+}
