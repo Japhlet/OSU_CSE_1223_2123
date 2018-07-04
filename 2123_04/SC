@@ -1,0 +1,72 @@
+/**
+ * SimpleCustomer.java
+ * 
+ * Customer class. 
+ * 
+ *  @version 20180309
+ * 
+ */
+
+public class SimpleCustomer 
+{
+	
+	private String lastname;
+	private String firstname;
+	private String streetAdd;
+	private String city;
+	private String state;
+	private String zip;
+	private double salesTax;
+	
+	public void setLastName(String name)
+	{
+		this.lastname = name;
+	}
+	
+	public void setFirstName(String name)
+	{
+		this.firstname = name;
+	}
+	
+	public void setAddress(String address)
+	{
+		this.streetAdd = address;
+	}
+	
+	public void setCity(String city)
+	{
+		this.city = city;
+	}
+	
+	public void setState(String state)
+	{
+		this.state = state;
+	}
+	
+	public void setZip(String zip)
+	{
+		this.zip = zip;
+	}
+	
+	public void setSalesTax(double tax)
+	{
+		this.salesTax = tax;
+	}
+	
+	public double getSalesTax()
+	{
+		return this.salesTax;
+	}
+	
+	public void printAddress()
+	{
+		System.out.printf("%8s %-40s", "        ", this.firstname + " " + this.lastname);
+		System.out.println();
+		System.out.printf("%8s %-40s", "        ", this.streetAdd);
+		System.out.println();
+		System.out.printf("%8s %-40s", "        ", this.city + " " + this.state + " " + this.zip);
+		System.out.println();
+		System.out.println("------------------------------------------------------------------------------");
+	}
+
+}
