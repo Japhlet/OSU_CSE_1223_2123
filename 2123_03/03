@@ -1,0 +1,182 @@
+/**
+ * Project03.java
+ * PlayList management program for SimpleMusicTrack.java and SimplePlayList.java
+ * 
+ *  @version 20180216
+ * 
+ */
+
+import java.io.*;
+import java.util.*; 
+
+public class Project03 
+{
+
+	public static void main(String[] args) throws IOException 
+	{
+		Scanner keyboard = new Scanner(System.in);
+		String fileName = getFileName(keyboard);
+		SimplePlayList playlist = new SimplePlayList();
+		
+		System.out.println();
+		
+		try
+		{
+			//Opens the database file
+			File dataFile = new File(fileName);
+			Scanner inFile = new Scanner(dataFile);
+			
+			buildPlaylist(inFile, playlist);
+		
+			//Prints currently playing, up next, and options
+			currentlyPlaying(playlist);
+			printOptions();
+			System.out.println();
+			String toDo = keyboard.nextLine();
+			
+			while (!(toDo.equalsIgnoreCase("Q")))
+			{
+				//Play next track method
+				if (toDo.equalsIgnoreCase("p"))
+				{
+					currentlyPlaying(playlist);
+					printOptions();
+				}
+				
+				//Add a new track method
+				else if (toDo.equalsIgnoreCase("a"))
+				{
+					addTo(playlist, keyboard);
+					printOptions();
+				}
+				
+				toDo = keyboard.nextLine();
+				System.out.println();
+				
+			}
+			
+			//Quit method
+			quitPrint(playlist);
+			
+			
+			//Closes Scanners
+			keyboard.close();
+			inFile.close();
+		}
+		
+		catch (IOException e)
+		{
+			System.out.println("File could not be opened " + e);
+		}
+	}
+	
+	public static String getFileName(Scanner keyboard)
+	{
+		System.out.println("Enter database filename: ");
+		return keyboard.nextLine();
+	}
+	
+	public static void printOptions()
+	{
+		System.out.println("[P]lay next track");
+		System.out.println("[A]dd a new track");
+		System.out.println("[Q]uit");
+	}
+	
+	public static void quitPrint(SimplePlayList playlist)
+	{
+		System.out.println("Tracks remaining in play list");
+		System.out.println("------------------------------------------------------------");
+		
+		int counter = 1; 
+		
+		if (!(playlist.isEmpty()))
+		{
+			while (!(playlist.isEmpty()))
+			{
+				SimpleMusicTrack toPrint = (SimpleMusicTrack) playlist.getNextTrack();
+				System.out.print(counter + " - ");
+				System.out.print(toPrint.toString());
+				System.out.println();
+				
+				++counter;
+			}
+		}
+		
+		else
+		{
+			System.out.println("Playlist is empty.");
+		}
+		
+	}
+	
+	public static void buildPlaylist(Scanner inFile, SimplePlayList playlist)
+	{
+		while (inFile.hasNext())
+		{
+			SimpleMusicTrack toAdd = new SimpleMusicTrack();
+			toAdd.setName(inFile.nextLine());
+			toAdd.setArtist(inFile.nextLine());
+			toAdd.setAlbum(inFile.nextLine());
+			
+			playlist.addTrack(toAdd);
+		}
+	}
+	
+	public static void currentlyPlaying(SimplePlayList playlist)
+	{
+		if (!(playlist.isEmpty()))
+		{
+			SimpleMusicTrack current = playlist.getNextTrack();
+			System.out.println("Currently Playing: " + current.getName() + " / " + current.getArtist());
+			
+			if(playlist.peekAtNextTrack() == null)
+			{
+				System.out.println("Playlist is empty. No next track. Please add tracks for quit.");
+			}
+			
+			else
+			{
+				SimpleMusicTrack next = playlist.peekAtNextTrack();
+				System.out.println("Next track to play: " + next.getName() + " / " + next.getArtist());
+			}
+			
+			
+			
+		}
+		
+		else
+		{
+			System.out.println("Playlist is empty - no tracks playing.");
+		}
+		
+	}
+	
+	public static void addTo(SimplePlayList playlist, Scanner keyboard)
+	{
+		SimpleMusicTrack newSong = new SimpleMusicTrack();
+		
+		//Gets details about new song and adds them to the object
+		System.out.println("Track name: ");
+		newSong.setName(keyboard.nextLine());
+		
+		System.out.println("Artist name: ");
+		newSong.setArtist(keyboard.nextLine());
+		
+		System.out.println("Album name: ");
+		newSong.setAlbum(keyboard.nextLine());
+		
+		//Verifies desire to add to list
+		System.out.println("New track: " + newSong.getName());
+		System.out.println("Artist name: " + newSong.getArtist());
+		System.out.println("Album name: " + newSong.getAlbum());
+		
+		System.out.println("Are you sure you want to add this track [y/n]?");
+		if(keyboard.nextLine().equalsIgnoreCase("y"))
+		{
+			playlist.addTrack(newSong);
+		}
+		
+	}
+
+}
