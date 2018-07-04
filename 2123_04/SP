@@ -1,0 +1,149 @@
+/**
+ * SimpleProduct.java
+ * 
+ *   A simple interface for a possible family of Product 
+ *   classes.
+ *   
+ *  @version 20180309
+ */
+
+import java.util.Scanner;
+
+class SimpleProduct implements Product
+{
+	
+	private String name;
+	private String type;
+	private double price;
+	int quantity;
+	boolean inStock;
+
+	/*
+	 * setName
+	 *  @param name - new name for the product
+	 */
+	public void setName(String name)
+	{
+		this.name = name;
+	}
+
+	/*
+	 * getName
+	 *  @return the name of the product
+	 */
+	public String getName()
+	{
+		return this.name;
+	}
+
+	/*
+	 * setType
+	 *  @param type - the type of the product
+	 */
+	public void setType(String type)
+	{
+		this.type = type; 
+	}
+
+	/*
+	 * getType
+	 * @return - the product type
+	 */
+	public String getType()
+	{
+		return this.type;
+	}
+
+	/*
+	 * setPrice
+	 * @param price - the price of the product
+	 */
+	public void setPrice(double price)
+	{
+		this.price = price;
+	}
+
+	/*
+	 * getPrice
+	 * @return the price of the product
+	 */
+	public double getPrice()
+	{
+		return price;
+	}
+
+	/*
+	 * setQuantity
+	 * @param quantity - the number of this product in inventory
+	 */
+	public void setQuantity(int quantity)
+	{
+		this.quantity = quantity;
+	}
+
+	/*
+	 * getQuantity
+	 * @return the number of this product in inventory
+	 */
+	public int getQuantity()
+	{
+		return quantity;
+	}
+	
+	/*
+	 * setInStock
+	 * @param inStock - true if this product is in stock
+	 */
+	public void setInStock(boolean inStock)
+	{
+		this.inStock = inStock;
+	}
+
+	/*
+	 * getQuantity
+	 * @return true if this product is in stock
+	 */
+	public boolean getInStock()
+	{
+		return this.inStock;
+	}
+	
+	/*
+	 * readNextProduct
+	 * @param inFile - a Scanner containing product entries
+	 * @return false if the product cannot be completely read,
+	 * 			true otherwise
+	 */
+	public boolean readNextProduct(Scanner inFile)
+	{
+		if(!inFile.hasNext())
+		{
+			return false;
+		}
+		else
+		{
+			return true;
+		}
+	}
+	
+	public boolean equals(Object obj)
+	{
+		SimpleProduct test = (SimpleProduct) obj;
+		
+		if (this.name.equals(test.name) && this.type.equals(test.type))
+		{
+			return true;
+		}
+		
+		else
+		{
+			return false;
+		}
+	}
+	
+	public String toString()
+	{
+		return "(" + this.name + ", " + this.type + ", " + this.price + ", " + this.quantity + ")";
+	}
+
+}
